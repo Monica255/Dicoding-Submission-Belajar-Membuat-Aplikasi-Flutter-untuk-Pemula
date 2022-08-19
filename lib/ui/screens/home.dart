@@ -1,7 +1,8 @@
+import 'package:animal_app/ui/widgets/animal_grid.dart';
 import 'package:flutter/material.dart';
-import 'package:animal_app/ui/service/animal.api.dart';
-import '../service/animal.dart';
-import '../widgets/animal_card.dart';
+import 'package:animal_app/service/animal.api.dart';
+import 'package:animal_app/service/animal.dart';
+import '../widgets/animal_list.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -24,7 +25,6 @@ class _MyHomePageState extends State<Home> {
       _isLoading = false;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,11 +38,16 @@ class _MyHomePageState extends State<Home> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _list.length,
-              itemBuilder: (context, idx) {
-                return AnimalCard(url: _list[idx].url, name: _list[idx].name);
-              }),
+          : LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+              if (constraints.maxWidth <= 600) {
+                return AnimalList(list: _list, ctx: context);
+              } else if (constraints.maxWidth <= 1200) {
+                return AnimalGrid(list: _list, ctx: context, crossAxisCount: 4);
+              } else {
+                return AnimalGrid(list: _list, ctx: context, crossAxisCount: 6);
+              }
+            }),
     );
   }
 }
